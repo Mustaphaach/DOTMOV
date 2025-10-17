@@ -1,4 +1,3 @@
-
 export interface Media {
   id: number;
   title?: string;
@@ -60,8 +59,9 @@ export type URLParams = {
 
 export interface TMDBData {
     title: string;
+    overview: string; // ADDED THIS LINE
     seasons?: number[];
-    [key: number]: number; // episode counts per season
+    [key: number]: number | string | number[] | undefined; // Updated to allow string for overview
 }
 
 export interface EpisodeSelectionData {
