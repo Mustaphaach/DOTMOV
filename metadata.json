@@ -1,0 +1,5 @@
+{
+  "name": "CineStream",
+  "description": "An amazing movie and series streaming website where you can find and watch your favorite content. Features include powerful search, curated collections on the homepage, and multiple streaming servers for an uninterrupted viewing experience.",
+  "requestFramePermissions": []
+}
