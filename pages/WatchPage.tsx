@@ -8,12 +8,12 @@ import Loader from '../components/Loader';
 import EpisodeSelector from '../components/EpisodeSelector';
 
 const SERVERS = [
-    { id: 1, name: "Vidsrc" },
-    { id: 2, name: "MoviesAPI" },
-    { id: 3, name: "VidsrcME" },
-    { id: 4, name: "Videasy" },
-    { id: 5, name: "VidsrcSU" },
-    { id: 6, name: "VidLink" },
+    { id: 1, name: "Server 1" },
+    { id: 2, name: "Server 2" },
+    { id: 3, name: "Server 3" },
+    { id: 4, name: "Server 4" },
+    { id: 5, name: "Server 5" },
+    { id: 6, name: "Server 6" },
 ];
 
 const WatchPage: React.FC = () => {
