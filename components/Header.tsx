@@ -17,7 +17,7 @@ const Header: React.FC = () => {
   return (
     <header className="bg-gray-900 bg-opacity-80 backdrop-blur-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-3xl font-bold text-blue-500 tracking-wider">
+        <Link to="https://dotmov.me" className="text-3xl font-bold text-blue-500 tracking-wider">
           DOTMOV
         </Link>
         <div className="flex items-center space-x-4">
