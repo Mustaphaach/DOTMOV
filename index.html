@@ -4,8 +4,58 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="https://i.postimg.cc/cCwbjZSr/image-removebg-preview-1.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DOTMOV - Stream Movies & TV Shows</title>
-    <meta name="description" content="Watch the latest movies and TV shows on DOTMOV">
+    <meta name="google-site-verification" content="ru0FVfb12PA06ISLWWbiCnwYnu1ShHmA-0UYSyqdh3E" />
+    
+    <!-- Primary Meta Tags -->
+    <title>DOTMOV - Watch Free Movies & TV Shows Online | Stream HD Content</title>
+    <meta name="title" content="DOTMOV - Watch Free Movies & TV Shows Online | Stream HD Content" />
+    <meta name="description" content="Stream thousands of movies and TV shows for free on DOTMOV. Watch trending films, popular series, and new releases in HD quality. No subscription required!" />
+    <meta name="keywords" content="watch movies online, free streaming, TV shows, HD movies, stream series, latest movies, trending shows, DOTMOV, online cinema, free movies" />
+    <meta name="author" content="DOTMOV" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://dotmov.me/" />
+    <meta property="og:title" content="DOTMOV - Watch Free Movies & TV Shows Online" />
+    <meta property="og:description" content="Stream thousands of movies and TV shows for free on DOTMOV. Watch trending films, popular series, and new releases in HD quality." />
+    <meta property="og:image" content="https://i.postimg.cc/cCwbjZSr/image-removebg-preview-1.png" />
+    <meta property="og:site_name" content="DOTMOV" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://dotmov.me/" />
+    <meta property="twitter:title" content="DOTMOV - Watch Free Movies & TV Shows Online" />
+    <meta property="twitter:description" content="Stream thousands of movies and TV shows for free on DOTMOV. Watch trending films, popular series, and new releases in HD quality." />
+    <meta property="twitter:image" content="https://i.postimg.cc/cCwbjZSr/image-removebg-preview-1.png" />
+    
+    <!-- Additional SEO Tags -->
+    <link rel="canonical" href="https://dotmov.me/" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="DOTMOV" />
+    
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "DOTMOV",
+      "alternateName": "DOTMOV - Movie Streaming Platform",
+      "description": "Stream thousands of movies and TV shows for free on DOTMOV",
+      "url": "https://dotmov.me/",
+      "logo": "https://i.postimg.cc/cCwbjZSr/image-removebg-preview-1.png",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://dotmov.me/#/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +75,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        height: 100dvh; /* For mobile browsers */
+        height: 100dvh;
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         display: flex;
         align-items: center;
@@ -40,7 +90,6 @@
         visibility: hidden;
       }
 
-      /* Animated Background */
       .preloader-bg {
         position: absolute;
         width: 100%;
@@ -57,11 +106,10 @@
         animation: rotate 20s linear infinite;
       }
 
-      /* Logo Animation - Responsive */
       .preloader-logo {
         position: relative;
         z-index: 10;
-        font-size: clamp(2.5rem, 12vw, 5rem); /* Responsive font size */
+        font-size: clamp(2.5rem, 12vw, 5rem);
         font-weight: 900;
         background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
         background-size: 200% 200%;
@@ -75,10 +123,9 @@
         user-select: none;
       }
 
-      /* Glowing effect around logo - Responsive */
       .logo-glow {
         position: absolute;
-        width: clamp(200px, 60vw, 300px); /* Responsive glow size */
+        width: clamp(200px, 60vw, 300px);
         height: clamp(200px, 60vw, 300px);
         border-radius: 50%;
         background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
@@ -86,7 +133,6 @@
         z-index: 1;
       }
 
-      /* Animations */
       @keyframes rotate {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
@@ -98,12 +144,8 @@
       }
 
       @keyframes scaleUpDown {
-        0%, 100% { 
-          transform: scale(1);
-        }
-        50% { 
-          transform: scale(1.05);
-        }
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
       }
 
       @keyframes pulseGlow {
@@ -117,14 +159,12 @@
         }
       }
 
-      /* Mobile-specific adjustments */
       @media (max-width: 640px) {
         .preloader-logo {
           letter-spacing: 0.1em;
         }
       }
 
-      /* Custom scrollbar for webkit browsers */
       .custom-scrollbar::-webkit-scrollbar {
         height: 8px;
         width: 8px;
@@ -140,13 +180,11 @@
       .custom-scrollbar::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(135deg, #2563eb, #7c3aed);
       }
-      /* Custom scrollbar for firefox */
       .custom-scrollbar {
         scrollbar-width: thin;
         scrollbar-color: #3b82f6 #1e293b;
       }
 
-      /* Animation keyframes for Hero section */
       @keyframes fade-in-down {
         0% {
           opacity: 0;
@@ -174,7 +212,6 @@
         animation: fade-in-up 0.8s ease-out 0.2s both;
       }
 
-      /* Hide content until loaded */
       #root {
         opacity: 0;
         transition: opacity 0.8s ease-in;
@@ -184,7 +221,6 @@
         opacity: 1;
       }
 
-      /* Prevent scrolling during preloader */
       body.preloader-active {
         overflow: hidden;
         position: fixed;
@@ -218,28 +254,20 @@
     <!-- Preloader Script -->
     <script>
       window.addEventListener('load', function() {
-        // Minimum display time for preloader (1.2 seconds)
         setTimeout(function() {
           const preloader = document.getElementById('preloader');
           const root = document.getElementById('root');
           
-          // Fade out preloader
           preloader.classList.add('fade-out');
-          
-          // Show root content
           root.classList.add('loaded');
-          
-          // Re-enable scrolling
           document.body.classList.remove('preloader-active');
           
-          // Remove preloader from DOM after animation
           setTimeout(function() {
             preloader.style.display = 'none';
           }, 800);
         }, 1200);
       });
 
-      // Fallback: Remove preloader after 5 seconds regardless
       setTimeout(function() {
         const preloader = document.getElementById('preloader');
         if (preloader && preloader.style.display !== 'none') {
