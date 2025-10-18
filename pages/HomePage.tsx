@@ -156,7 +156,7 @@ const HomePage: React.FC = () => {
                 {currentHeroMedia.overview}
               </p>
 
-              {/* Action Buttons */}
+              {/* Action Buttons - + BUTTON REMOVED */}
               <div className="flex flex-wrap items-center gap-4 animate-fade-in-up pt-4">
                 <Link 
                   to={heroLinkTo} 
@@ -176,15 +176,6 @@ const HomePage: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <span>More Info</span>
-                </button>
-
-                <button 
-                  className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-4 rounded-xl transition-all duration-300 transform hover:scale-110 hover:rotate-12 border-2 border-white/20 shadow-xl"
-                  aria-label="Add to watchlist"
-                >
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
                 </button>
               </div>
             </div>
