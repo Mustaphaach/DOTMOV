@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWatchQuery } from '../hooks/useQuery';
 import { fetchTMDBDataFromParams, fetchEpSelectionData, getMediaDetailsForStorage } from '../services/tmdbService';
@@ -28,6 +28,10 @@ const WatchPage: React.FC = () => {
     const [isEpSelectorOpen, setIsEpSelectorOpen] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [showServerInfo, setShowServerInfo] = useState(false);
+    const [failedServers, setFailedServers] = useState<number[]>([]);
+    const [isAutoSwitching, setIsAutoSwitching] = useState(false);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+    const loadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const getIframeSrc = useCallback((serverNumber: number) => {
         if (!params) return '';
@@ -54,6 +58,54 @@ const WatchPage: React.FC = () => {
         return src;
     }, [params]);
 
+    // Auto-switch to next available server
+    const tryNextServer = useCallback(() => {
+        if (!params) return;
+        
+        const availableServers = SERVERS.filter(s => !failedServers.includes(s.id));
+        const currentIndex = availableServers.findIndex(s => s.id === currentServer);
+        
+        if (currentIndex < availableServers.length - 1) {
+            const nextServer = availableServers[currentIndex + 1];
+            console.log(`Server ${currentServer} failed. Switching to Server ${nextServer.id}...`);
+            setIsAutoSwitching(true);
+            setFailedServers(prev => [...prev, currentServer]);
+            setCurrentServer(nextServer.id);
+            setIframeSrc(getIframeSrc(nextServer.id));
+            
+            // Show notification
+            setTimeout(() => setIsAutoSwitching(false), 2000);
+        } else {
+            console.error('All servers failed to load');
+            setError('Unable to load video from any server. Please try again later.');
+        }
+    }, [currentServer, failedServers, getIframeSrc, params]);
+
+    // Monitor iframe loading
+    useEffect(() => {
+        if (!iframeSrc) return;
+
+        // Clear previous timeout
+        if (loadTimeoutRef.current) {
+            clearTimeout(loadTimeoutRef.current);
+        }
+
+        // Set a timeout to detect if iframe fails to load
+        loadTimeoutRef.current = setTimeout(() => {
+            // If iframe hasn't loaded after 15 seconds, try next server
+            if (iframeRef.current && !failedServers.includes(currentServer)) {
+                console.warn(`Server ${currentServer} timeout. Trying next server...`);
+                tryNextServer();
+            }
+        }, 15000); // 15 second timeout
+
+        return () => {
+            if (loadTimeoutRef.current) {
+                clearTimeout(loadTimeoutRef.current);
+            }
+        };
+    }, [iframeSrc, currentServer, failedServers, tryNextServer]);
+
     useEffect(() => {
         if (!params) {
             setError("Invalid URL. Please select a movie or TV show.");
@@ -64,6 +116,7 @@ const WatchPage: React.FC = () => {
         const loadData = async () => {
             setLoading(true);
             setError(null);
+            setFailedServers([]);
             try {
                 const data = await fetchTMDBDataFromParams(params as any);
                 setTmdbData(data);
@@ -71,7 +124,7 @@ const WatchPage: React.FC = () => {
                     const epData = await fetchEpSelectionData(params as any, data);
                     setEpSelectionData(epData);
                 }
-                const serverFromUrl = params.server ? parseInt(params.server) : 1;
+                const serverFromUrl = params.server ? parseInt(params.server) : 4; // Default to Server 4
                 setCurrentServer(serverFromUrl);
                 setIframeSrc(getIframeSrc(serverFromUrl));
             } catch (err) {
@@ -88,7 +141,6 @@ const WatchPage: React.FC = () => {
     // Track recently viewed when media is loaded
     useEffect(() => {
         if (tmdbData && params) {
-            // Fetch full media details and save
             const saveToRecent = async () => {
                 try {
                     const fullMediaData = await getMediaDetailsForStorage(params.type, params.id);
@@ -105,6 +157,12 @@ const WatchPage: React.FC = () => {
     const changeServer = (serverNumber: number) => {
         setCurrentServer(serverNumber);
         setIframeSrc(getIframeSrc(serverNumber));
+        setIsAutoSwitching(false);
+        
+        // Clear timeout when manually switching
+        if (loadTimeoutRef.current) {
+            clearTimeout(loadTimeoutRef.current);
+        }
     };
 
     const getNextEp = () => {
@@ -200,6 +258,17 @@ const WatchPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-8 pt-16 lg:pt-20">
+            {/* Auto-Switch Notification */}
+            {isAutoSwitching && (
+                <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-xl flex items-center space-x-3 animate-fade-in-down">
+                    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span className="font-semibold">Switching to Server {currentServer}...</span>
+                </div>
+            )}
+
             {/* Video Player Container */}
             <div className="relative bg-black">
                 <div className="max-w-7xl mx-auto">
@@ -207,11 +276,25 @@ const WatchPage: React.FC = () => {
                         {iframeSrc ? (
                             <>
                                 <iframe
+                                    ref={iframeRef}
                                     key={iframeSrc}
                                     src={iframeSrc}
                                     allowFullScreen
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups-to-escape-sandbox"
+                                    referrerPolicy="no-referrer"
                                     className="w-full h-full border-0"
                                     title="Video Player"
+                                    onLoad={() => {
+                                        // Clear timeout when iframe loads successfully
+                                        if (loadTimeoutRef.current) {
+                                            clearTimeout(loadTimeoutRef.current);
+                                        }
+                                    }}
+                                    onError={() => {
+                                        console.error(`Server ${currentServer} failed to load`);
+                                        tryNextServer();
+                                    }}
                                 ></iframe>
                                 
                                 {/* Loading Overlay */}
@@ -343,7 +426,7 @@ const WatchPage: React.FC = () => {
                                 <svg className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>If you experience playback issues, try switching to a different server. Each server may have different quality and loading speeds.</span>
+                                <span>If a server fails to load, we'll automatically try the next available server. You can also manually switch servers below.</span>
                             </p>
                         </div>
                     )}
@@ -354,26 +437,37 @@ const WatchPage: React.FC = () => {
                             <button
                                 key={server.id}
                                 onClick={() => changeServer(server.id)}
+                                disabled={failedServers.includes(server.id)}
                                 className={`relative group p-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
                                     currentServer === server.id 
                                         ? `bg-gradient-to-br from-${server.color}-600 to-${server.color}-700 text-white ring-2 ring-${server.color}-400 shadow-lg shadow-${server.color}-600/50` 
+                                        : failedServers.includes(server.id)
+                                        ? 'bg-gray-800 text-gray-600 cursor-not-allowed opacity-50'
                                         : 'bg-gray-700 hover:bg-gray-600 text-gray-300 border border-gray-600'
                                 }`}
                             >
                                 <div className="flex flex-col items-center space-y-2">
-                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
-                                    </svg>
+                                    {failedServers.includes(server.id) ? (
+                                        <svg className="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    ) : (
+                                        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                                        </svg>
+                                    )}
                                     <span className="text-sm">{server.name}</span>
                                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                                         currentServer === server.id 
                                             ? 'bg-white/20' 
+                                            : failedServers.includes(server.id)
+                                            ? 'bg-red-900/50'
                                             : 'bg-gray-600'
                                     }`}>
-                                        {server.badge}
+                                        {failedServers.includes(server.id) ? 'Failed' : server.badge}
                                     </span>
                                 </div>
-                                {currentServer === server.id && (
+                                {currentServer === server.id && !failedServers.includes(server.id) && (
                                     <div className="absolute top-2 right-2">
                                         <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
