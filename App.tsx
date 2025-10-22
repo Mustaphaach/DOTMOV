@@ -1,6 +1,6 @@
-import { Analytics } from "@vercel/analytics/react"
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react'; // ✅ Added
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
@@ -31,6 +31,7 @@ const App: React.FC = () => {
           </Routes>
         </main>
         <Footer />
+        <Analytics /> {/* ✅ Added here so it runs globally */}
       </div>
     </HashRouter>
   );
