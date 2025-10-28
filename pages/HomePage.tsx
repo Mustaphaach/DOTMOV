@@ -7,36 +7,6 @@ import Loader from '../components/Loader';
 import { TMDB_BACKDROP_BASE_URL } from '../constants';
 import { getRecentlyViewed } from '../utils/storage';
 
-// AdSense Component
-const AdSenseAd: React.FC<{ 
-  adSlot: string; 
-  adFormat?: string;
-  fullWidthResponsive?: boolean;
-  style?: React.CSSProperties;
-}> = ({ adSlot, adFormat = 'auto', fullWidthResponsive = true, style = { display: 'block' } }) => {
-  useEffect(() => {
-    try {
-      // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (error) {
-      console.error('AdSense error:', error);
-    }
-  }, []);
-
-  return (
-    <div className="ad-container my-8 flex justify-center">
-      <ins
-        className="adsbygoogle"
-        style={style}
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" // Replace with your AdSense ID
-        data-ad-slot={adSlot}
-        data-ad-format={adFormat}
-        data-full-width-responsive={fullWidthResponsive.toString()}
-      ></ins>
-    </div>
-  );
-};
-
 const HomePage: React.FC = () => {
   const [trendingMovies, setTrendingMovies] = useState<Media[]>([]);
   const [trendingTv, setTrendingTv] = useState<Media[]>([]);
@@ -186,7 +156,7 @@ const HomePage: React.FC = () => {
                 {currentHeroMedia.overview}
               </p>
 
-              {/* Action Buttons */}
+              {/* Action Buttons - + BUTTON REMOVED */}
               <div className="flex flex-wrap items-center gap-4 animate-fade-in-up pt-4">
                 <Link 
                   to={heroLinkTo} 
@@ -249,17 +219,6 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* AD SPACE 1: Top Banner Ad - Below Hero Section */}
-      <div className="container mx-auto px-4">
-        <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 rounded-xl p-6 border border-gray-700/50 backdrop-blur-sm">
-          <p className="text-center text-gray-400 text-sm mb-4">Advertisement</p>
-          <AdSenseAd 
-            adSlot="1234567890"
-            style={{ display: 'block', minHeight: '250px' }}
-          />
-        </div>
-      </div>
 
       {/* More Info Modal */}
       {showMoreInfo && currentHeroMedia && (
@@ -348,7 +307,7 @@ const HomePage: React.FC = () => {
         </div>
       )}
 
-      {/* Content Sections with Ad Placements */}
+      {/* Content Sections */}
       <div className="container mx-auto px-4 py-8 space-y-16">
         {recentlyViewed.length > 0 && (
           <MediaSlider 
@@ -365,15 +324,6 @@ const HomePage: React.FC = () => {
           autoScroll={true}
           autoScrollSpeed={1}
         />
-
-        {/* AD SPACE 2: In-Feed Ad - After Trending Movies */}
-        <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 rounded-xl p-6 border border-gray-700/50 backdrop-blur-sm">
-          <p className="text-center text-gray-400 text-sm mb-4">Advertisement</p>
-          <AdSenseAd 
-            adSlot="0987654321"
-            style={{ display: 'block', minHeight: '250px' }}
-          />
-        </div>
         
         <MediaSlider 
           title="Trending TV Shows" 
@@ -390,15 +340,6 @@ const HomePage: React.FC = () => {
           autoScroll={true}
           autoScrollSpeed={0.8}
         />
-
-        {/* AD SPACE 3: In-Feed Ad - After Popular Movies */}
-        <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 rounded-xl p-6 border border-gray-700/50 backdrop-blur-sm">
-          <p className="text-center text-gray-400 text-sm mb-4">Advertisement</p>
-          <AdSenseAd 
-            adSlot="2345678901"
-            style={{ display: 'block', minHeight: '250px' }}
-          />
-        </div>
         
         <MediaSlider 
           title="Popular TV Shows" 
@@ -407,15 +348,6 @@ const HomePage: React.FC = () => {
           autoScroll={true}
           autoScrollSpeed={1}
         />
-
-        {/* AD SPACE 4: Bottom Banner Ad - Before Footer */}
-        <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 rounded-xl p-6 border border-gray-700/50 backdrop-blur-sm">
-          <p className="text-center text-gray-400 text-sm mb-4">Advertisement</p>
-          <AdSenseAd 
-            adSlot="3456789012"
-            style={{ display: 'block', minHeight: '250px' }}
-          />
-        </div>
       </div>
 
       <style>{`
